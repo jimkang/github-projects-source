@@ -1,0 +1,45 @@
+{
+  "name": "github-projects-source",
+  "version": "1.0.0",
+  "description": "A read-through cache of per-user GitHub repo and commit data. Uses LevelUp (backed by either LevelJS in the browser or LevelDB on Node) as the store and the GitHub API as the system-of-record.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimkang/github-projects-source.git"
+  },
+  "keywords": [],
+  "author": "Jim Kang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimkang/github-projects-source/issues"
+  },
+  "homepage": "https://github.com/jimkang/github-projects-source",
+  "devDependencies": {
+    "assert-no-error": "^1.0.0",
+    "basic-browser-request": "^7.3.0",
+    "browserify": "^14.4.0",
+    "level-js": "^2.2.4",
+    "leveldown": "^1.7.2",
+    "lodash.defaults": "^4.2.0",
+    "lodash.omit": "^4.5.0",
+    "lodash.values": "^4.3.0",
+    "request": "^2.81.0",
+    "smokestack": "^3.4.1",
+    "tap-closer": "^1.0.0",
+    "tape": "^4.6.0"
+  },
+  "dependencies": {
+    "call-next-tick": "^2.0.1",
+    "d3-queue": "^3.0.7",
+    "get-user-commits": "^1.0.4",
+    "level-sublevel": "^6.6.1",
+    "levelup": "^1.3.9",
+    "lodash.assign": "^4.2.0",
+    "lodash.curry": "^4.1.1",
+    "lodash.findwhere": "^3.1.0",
+    "standard-bail": "^2.0.1"
+  }
+}
