@@ -45,8 +45,7 @@ var defaultCtorOpts = {
   githubToken: config.githubTestToken,
   username: 'jimkang',
   userEmail: 'jimkang@gmail.com',
-  onNonFatalError: logNonFatalError,
-  userAgent: 'github-projects-source-test'
+  onNonFatalError: logNonFatalError
 };
 
 if (typeof window === 'object') {
@@ -57,13 +56,14 @@ if (typeof window === 'object') {
 else {
   defaultCtorOpts.db = require('leveldown');
   defaultCtorOpts.request = require('request');
+  defaultCtorOpts.userAgent = 'github-projects-source-test'  
 }
 
 var testRunCount = 0;
 
 // test('Pause', (t) => {window.c = t.end; console.log('After setting breakpoints, type c() to continue.');});
 test('Stream from API.', apiDeedStreamTest);
-// test('Stream from API again, for fewer commits.', apiDeedStreamTest);
+test('Stream from API again, for fewer commits.', apiDeedStreamTest);
 
 function apiDeedStreamTest(t) {
   var streamEndEventReceived = false;
