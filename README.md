@@ -13,16 +13,16 @@ Usage
 
 First, construct an instance by calling `GitHubProjectsSource` with the opts:
 
-**githubToken**: The token for the calls to the GitHub API.
-**username**: The username of the GitHub user for which you are getting repos and commits.
-**userEmail**: The email associated with the commits you are getting.
-**request**: An http request function compatible with [github.com/request/request]. [Details about what's compatible.](https://github.com/jimkang/get-user-commits#plug-in-your-own-request-library)
-**onNonFatalError**: A callback that will be passed errors that are encountered that are not critical enough to stop streaming.
-**dbName**: The label for the LevelDB (or LevelDB-like) database that things will be cached in.
-**db**: A [leveldown](https://github.com/Level/levelup/)-compatible database, such as memdown. If this opt is not provided, leveldown itself will be used (which won't work in browsers). To use this in browsers, [level.js](https://github.com/maxogden/level.js) is recommended.
-**onDeed**: A callback that will be called every time a new commit is received. The term 'deed' is used here so that github-projects-source will be compatible with projects-sources that do not deal with commits or repos.
-**onProject**: A callback that will be called every time a new repo is received.
-**existingProjects**: Existing repos and their current states. This will let github-projects-source avoid fetching commits that are already among existingProjects.
+- **githubToken**: The token for the calls to the GitHub API.
+- **username**: The username of the GitHub user for which you are getting repos and commits.
+- **userEmail**: The email associated with the commits you are getting.
+- **request**: An http request function compatible with [github.com/request/request]. [Details about what's compatible.](https://github.com/jimkang/get-user-commits#plug-in-your-own-request-library)
+- **onNonFatalError**: A callback that will be passed errors that are encountered that are not critical enough to stop streaming.
+- **dbName**: The label for the LevelDB (or LevelDB-like) database that things will be cached in.
+- **db**: A [leveldown](https://github.com/Level/levelup/)-compatible database, such as memdown. If this opt is not provided, leveldown itself will be used (which won't work in browsers). To use this in browsers, [level.js](https://github.com/maxogden/level.js) is recommended.
+- **onDeed**: A callback that will be called every time a new commit is received. The term 'deed' is used here so that github-projects-source will be compatible with projects-sources that do not deal with commits or repos.
+- **onProject**: A callback that will be called every time a new repo is received.
+- **existingProjects**: Existing repos and their current states. This will let github-projects-source avoid fetching commits that are already among existingProjects.
 
 The constructed instance will have a `startStream(opts, callback)` method, which takes an options object and a callback that is called when either everything can stream as been streamed or a fatal error is encountered. The options object can have a `sources` param that is an array containing the strings 'local' and/or 'API'. If 'local' is specified, it will stream from the local cache. If 'API' is specified, it will stream from the GitHub API. If both are specified, it will first stream from the local cache, then get the rest from the GitHub API.
 
