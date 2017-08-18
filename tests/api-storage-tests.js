@@ -56,7 +56,7 @@ if (typeof window === 'object') {
 else {
   defaultCtorOpts.db = require('leveldown');
   defaultCtorOpts.request = require('request');
-  defaultCtorOpts.userAgent = 'github-projects-source-test'  
+  defaultCtorOpts.userAgent = 'github-projects-source-test';
 }
 
 var testRunCount = 0;

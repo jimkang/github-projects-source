@@ -8,12 +8,14 @@ var findWhere = require('lodash.findwhere');
 var config = require('../test-config');
 var defaults = require('lodash.defaults');
 var omit = require('lodash.omit');
+var getUserCommits = require('get-user-commits');
 
 var defaultCtorOpts = {
   githubToken: config.githubTestToken,
   username: 'jimkang',
   userEmail: 'jimkang@gmail.com',
-  onNonFatalError: logNonFatalError
+  onNonFatalError: logNonFatalError,
+  getUserCommits
 };
 
 if (typeof window === 'object') {

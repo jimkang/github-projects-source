@@ -2,11 +2,11 @@ var callNextTick = require('call-next-tick');
 var levelup = require('levelup');
 var Sublevel = require('level-sublevel');
 var queue = require('d3-queue').queue;
-var getUserCommits = require('get-user-commits');
 var sb = require('standard-bail')();
 var findWhere = require('lodash.findwhere');
 var curry = require('lodash.curry');
 var shamble = require('./shamble');
+var defaultGetUserCommits = require('get-user-commits');
 
 function GitHubProjectsSource(
   {
@@ -20,7 +20,8 @@ function GitHubProjectsSource(
     userEmail,
     request,
     userAgent,
-    onNonFatalError
+    onNonFatalError,
+    getUserCommits = defaultGetUserCommits
   }) {
 
   var levelupOpts = {
