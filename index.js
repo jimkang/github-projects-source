@@ -134,7 +134,7 @@ function GitHubProjectsSource(
     }
 
     function callDoneWhenOutstandingPutsComplete(error) {
-      console.log('callDoneWhenOutstandingPutsComplete outstandingPuts', outstandingPuts);
+      // console.log('callDoneWhenOutstandingPutsComplete outstandingPuts', outstandingPuts);
       if (error) {
         done(error);
       }
