@@ -21,7 +21,8 @@ function GitHubProjectsSource(
     request,
     userAgent,
     onNonFatalError,
-    getUserCommits = defaultGetUserCommits
+    getUserCommits = defaultGetUserCommits,
+    queryLogger
   }) {
 
   var levelupOpts = {
@@ -107,7 +108,8 @@ function GitHubProjectsSource(
             ['a', curry(putDeedFromSource)('API')],
             ['s', handlePutError],
             ['s', decrementOutstandingPuts]
-          ])
+          ]),
+          queryLogger
         };
         // console.log('localProjects', localProjects);
 

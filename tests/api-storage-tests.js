@@ -47,7 +47,8 @@ var defaultCtorOpts = {
   githubToken: config.githubTestToken,
   username: 'jimkang',
   userEmail: 'jimkang@gmail.com',
-  onNonFatalError: logNonFatalError
+  onNonFatalError: logNonFatalError,
+  queryLogger: console.error
 };
 
 if (typeof window === 'object') {
