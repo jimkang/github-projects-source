@@ -7,7 +7,7 @@ SMOKEFIREFOX = node_modules/.bin/tap-closer | \
 BROWSERIFY = ./node_modules/.bin/browserify
 
 test: clean-test-dbs
-	node tests/storage-tests.js
+	# node tests/storage-tests.js
 	node tests/api-storage-tests.js
 
 test-chrome:

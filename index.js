@@ -41,7 +41,8 @@ function GitHubProjectsSource(
     getDeed,
     putProject,
     getProject,
-    startStream
+    startStream,
+    closeDb
   };
 
   function putDeed(deed, done) {
@@ -185,6 +186,10 @@ function GitHubProjectsSource(
       done(null, projects);
     }
   }
+
+  function closeDb(done) {
+    levelDb.close(done);
+  }
 }
 
 function put(db, entity, listener, done) {
@@ -230,6 +235,9 @@ function updateProjectListAWithProjectListB(a, b) {
     else {
       for (var key in updatingProject) {
         if (key === 'deeds') {
+          if (!updatee.deeds) {
+            updatee.deeds = [];
+          }
           updatee.deeds = updatee.deeds.concat(updatingProject.deeds);
         }
         else {

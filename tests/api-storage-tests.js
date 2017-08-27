@@ -10,9 +10,11 @@ var defaults = require('lodash.defaults');
 
 // Start with a high number so test passes for the initial run.
 // The will be set to an actual count for subsequent runs, and those runs
-// should emit fewer deeds, assuming that a whole bunch of commits aren't
-// made to these projects between runs.
+// should emit fewer deeds from the 'API' srouce, assuming that a whole bunch of 
+// commits aren't made to these projects between runs.
 var emittedAPISourceDeedCountFromPreviousRun = 100000;
+var emittedLocalSourceDeedCountFromPreviousRun = -1;
+
 var projectsToCareAbout = [
   'transform-word-bot',
   'attnbot',
@@ -67,22 +69,21 @@ test('Stream from API again, for fewer commits.', apiDeedStreamTest);
 
 function apiDeedStreamTest(t) {
   var streamEndEventReceived = false;
-  var shouldListenToEvents = false;
   var emittedDeeds = {};
   var emittedProjects = {};
   var numberOfDeedsEmittedFromAPISource = 0;
+  var numberOfDeedsEmittedFromLocalSource = 0;
 
   var githubProjectsSource = GitHubProjectsSource(defaults(
     {
       onDeed: collectDeed,
       onProject: collectProject,
       filterProject: projectsToCareAbout ? weCareAboutThisProject : undefined,
-      dbName: 'api-deed-stream-test' + testRunCount
+      dbName: 'api-deed-stream-test'
     },
     defaultCtorOpts
   ));
 
-  shouldListenToEvents = true;
   githubProjectsSource.startStream(
     {sources: ['local', 'API'], existingProjects: existingProjects},
     checkStreamEnd
@@ -97,16 +98,15 @@ function apiDeedStreamTest(t) {
     if (source === 'API') {
       numberOfDeedsEmittedFromAPISource += 1;
     }
-    if (shouldListenToEvents) {
-      emittedDeeds[deed.id] = deed;
+    else if (source === 'local') {
+      numberOfDeedsEmittedFromLocalSource += 1;
     }
+    emittedDeeds[deed.id] = deed;
   }
 
   function collectProject(project) {
     t.ok(!streamEndEventReceived, 'Did not receive project event after end of stream.');
-    if (shouldListenToEvents) {
-      emittedProjects[project.id] = project;
-    }
+    emittedProjects[project.id] = project;
   }
 
   function checkStreamEnd(error) {
@@ -116,11 +116,18 @@ function apiDeedStreamTest(t) {
     var uniqueDeedsEmitted = Object.keys(emittedDeeds).length;
     console.log('uniqueDeedsEmitted:', uniqueDeedsEmitted);
     console.log('numberOfDeedsEmittedFromAPISource:', numberOfDeedsEmittedFromAPISource);
+    console.log('numberOfDeedsEmittedFromLocalSource:', numberOfDeedsEmittedFromLocalSource);
+
     t.ok(
       numberOfDeedsEmittedFromAPISource < emittedAPISourceDeedCountFromPreviousRun,
       'Fewer deeds were emitted from the API than on the previous run.'
     );
+    t.ok(
+      numberOfDeedsEmittedFromLocalSource > emittedLocalSourceDeedCountFromPreviousRun,
+      'More deeds were emitted from the local database than on the previous run.'
+    );
     emittedAPISourceDeedCountFromPreviousRun = numberOfDeedsEmittedFromAPISource;
+    emittedLocalSourceDeedCountFromPreviousRun = numberOfDeedsEmittedFromLocalSource;
 
     values(emittedDeeds).forEach(checkDeed);
     
@@ -136,7 +143,11 @@ function apiDeedStreamTest(t) {
     testRunCount += 1;
     // Allow a chance for events to be erroneously emitted after the
     // stream end event.
-    setTimeout(t.end, 1000);
+    setTimeout(close, 1000);
+
+    function close() {
+      githubProjectsSource.closeDb(t.end);
+    }
   }
 
   function checkDeed(deed) {
