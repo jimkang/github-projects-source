@@ -7,6 +7,8 @@ var findWhere = require('lodash.findwhere');
 var curry = require('lodash.curry');
 var shamble = require('./shamble');
 var defaultGetUserCommits = require('get-user-commits');
+var getProjectMetadata = require('./get-project-metadata');
+var defaults = require('lodash.defaults');
 
 function GitHubProjectsSource(
   {
@@ -80,7 +82,26 @@ function GitHubProjectsSource(
 
   function startStream({sources = ['local', 'API'], existingProjects = []}, done) {
     var outstandingPuts = 0;
-    startLocalStream(sb(proceedAfterStreamingLocal, done));
+    var projectMetadata;
+
+    getProjectMetadata(
+      {
+        gitRepoOwner: username,
+        gitToken: githubToken,
+        request
+      },
+      saveMetadata
+    );
+
+    function saveMetadata(error, metadata) {
+      if (error) {
+        onNonFatalError(error);
+      }
+      else {
+        projectMetadata = metadata;
+      }
+      startLocalStream(sb(proceedAfterStreamingLocal, done));
+    }
 
     function proceedAfterStreamingLocal(localProjects) {
       updateProjectListAWithProjectListB(localProjects, existingProjects);
@@ -98,6 +119,7 @@ function GitHubProjectsSource(
           existingRepos: localProjects,
           onRepo: shamble([
             ['s', incrementOutstandingPuts],
+            ['s', decorateProjectWithMetadata],
             ['a', curry(putProjectFromSource)('API')],
             ['s', handlePutError],
             ['s', decrementOutstandingPuts]
@@ -123,17 +145,24 @@ function GitHubProjectsSource(
       }
     }
 
-    function incrementOutstandingPuts(deed) {
+    function incrementOutstandingPuts(item) {
       outstandingPuts += 1;
       // console.log('incrementOutstandingPuts', outstandingPuts);
       // Pass this for the next function in the chain.
       // TODO: Revisit this awkwardness.
-      return deed;
+      return item;
     }
 
     function decrementOutstandingPuts() {
       outstandingPuts -= 1;
       // console.log('decrementOutstandingPuts', outstandingPuts);
+    }
+
+    function decorateProjectWithMetadata(project) {
+      if (projectMetadata && project.name in projectMetadata) {
+        project = defaults(projectMetadata[project.name], project);
+      }
+      return project;
     }
 
     function callDoneWhenOutstandingPutsComplete(error) {

@@ -31,7 +31,8 @@ var testCases = [
         getUserCommits,
         cache: false,
         filterProject: project => project.name === 'mhd',
-        onDeed: deed => deed
+        onDeed: deed => deed,
+        userAgent: 'github-projects-source-test'
       },
       baseCtorOpts
     ),
@@ -54,7 +55,7 @@ function runTest(testCase) {
       },
       testCase.ctorOpts
     ));
-    githubProjectsSource.startStream({sources: ['API'],}, t.end);
+    githubProjectsSource.startStream({sources: ['API']}, close);
 
     function checkProject(project) {
       t.ok(project.name, 'Project has a name.');
@@ -68,6 +69,10 @@ function runTest(testCase) {
           'Metadata property ' + prop + ' is correct.'
         );
       }
+    }
+
+    function close() {
+      githubProjectsSource.closeDb(t.end);
     }
   }
 }
