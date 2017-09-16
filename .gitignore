@@ -4,3 +4,4 @@ test-config.js
 local-deed-stream-test
 deed-update-test
 api-deed-stream-test*
+metadata-tests

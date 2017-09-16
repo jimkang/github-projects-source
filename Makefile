@@ -7,9 +7,11 @@ SMOKEFIREFOX = node_modules/.bin/tap-closer | \
 BROWSERIFY = ./node_modules/.bin/browserify
 
 test: clean-test-dbs
+	node tests/no-cache-tests.js
 	node tests/user-namespace-tests.js
 	node tests/storage-tests.js
 	node tests/api-storage-tests.js
+	node tests/metadata-tests.js
 
 test-chrome:
 	$(BROWSERIFY) tests/user-namespace-tests.js | $(SMOKECHROME)
@@ -28,6 +30,7 @@ clean-test-dbs:
 	rm -rf local-deed-stream-test
 	rm -rf deed-update-test
 	rm -rf api-deed-stream-test*
+	rm -rf metadata-tests*
 
 pushall:
 	git push origin master && npm publish
