@@ -14,14 +14,18 @@ test: clean-test-dbs
 	node tests/metadata-tests.js
 
 test-chrome:
+	$(BROWSERIFY) tests/no-cache-tests.js | $(SMOKECHROME)
 	$(BROWSERIFY) tests/user-namespace-tests.js | $(SMOKECHROME)
 	$(BROWSERIFY) tests/storage-tests.js | $(SMOKECHROME)
 	$(BROWSERIFY) tests/api-storage-tests.js | $(SMOKECHROME)
+	$(BROWSERIFY) tests/metadata-tests.js | $(SMOKECHROME)
 
 test-firefox:
-	$(BROWSERIFY) tests/user-namespace-tests.js | $(SMOKEFIREFOX
+	$(BROWSERIFY) tests/no-cache-tests.js | $(SMOKEFIREFOX)
+	$(BROWSERIFY) tests/user-namespace-tests.js | $(SMOKEFIREFOX)
 	$(BROWSERIFY) tests/storage-tests.js | $(SMOKEFIREFOX)
 	$(BROWSERIFY) tests/api-storage-tests.js | $(SMOKEFIREFOX)
+	$(BROWSERIFY) tests/metadata-tests.js | $(SMOKEFIREFOX)
 
 test-browser: test-chrome test-firefox
 

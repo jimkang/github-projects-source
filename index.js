@@ -24,7 +24,8 @@ function GitHubProjectsSource(
     userAgent,
     onNonFatalError,
     getUserCommits = defaultGetUserCommits,
-    queryLogger
+    queryLogger,
+    skipMetadata
   }) {
 
   var levelupOpts = {
@@ -84,14 +85,19 @@ function GitHubProjectsSource(
     var outstandingPuts = 0;
     var projectMetadata;
 
-    getProjectMetadata(
-      {
-        gitRepoOwner: username,
-        gitToken: githubToken,
-        request
-      },
-      saveMetadata
-    );
+    if (skipMetadata) {
+      startLocalStream(sb(proceedAfterStreamingLocal, done));
+    }
+    else {
+      getProjectMetadata(
+        {
+          gitRepoOwner: username,
+          gitToken: githubToken,
+          request
+        },
+        saveMetadata
+      );
+    }
 
     function saveMetadata(error, metadata) {
       if (error) {

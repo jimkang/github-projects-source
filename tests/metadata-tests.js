@@ -32,12 +32,35 @@ var testCases = [
         cache: false,
         filterProject: project => project.name === 'mhd',
         onDeed: deed => deed,
-        userAgent: 'github-projects-source-test'
+        userAgent: 'github-projects-source-test',
+        dbName: 'project-with-metadata'
       },
       baseCtorOpts
     ),
     expectedProjectMetaProperties: {
       description: 'A Music Hack Day project that ruined music at random.'
+    }
+  },
+  {
+    name: 'Skip metadata',
+    ctorOpts: defaults(
+      {
+        githubToken: config.githubTestToken,
+        username: 'jimkang',
+        userEmail: 'jimkang@gmail.com',
+        onNonFatalError: logNonFatalError,
+        getUserCommits,
+        cache: false,
+        filterProject: project => project.name === 'mhd',
+        onDeed: deed => deed,
+        userAgent: 'github-projects-source-test',
+        dbName: 'skip-metadata',
+        skipMetadata: true
+      },
+      baseCtorOpts
+    ),
+    expectedProjectMetaProperties: {
+      description: 'My Music Hack Day hack.'
     }
   }
 ];
@@ -50,8 +73,7 @@ function runTest(testCase) {
   function metadataTest(t) {
     var githubProjectsSource = GitHubProjectsSource(defaults(
       {
-        onProject: checkProject,
-        dbName: 'metadata-tests'
+        onProject: checkProject
       },
       testCase.ctorOpts
     ));
