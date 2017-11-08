@@ -1,6 +1,6 @@
 {
   "name": "github-projects-source",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A read-through cache of per-user GitHub repo and commit data. Uses LevelUp (backed by either LevelJS in the browser or LevelDB on Node) as the store and the GitHub API as the system-of-record.",
   "main": "index.js",
   "scripts": {
