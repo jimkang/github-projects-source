@@ -12,8 +12,7 @@ if (typeof window === 'object') {
   // Browser mode.
   baseCtorOpts.db = require('level-js');
   baseCtorOpts.request = require('basic-browser-request');
-}
-else {
+} else {
   baseCtorOpts.db = require('leveldown');
   baseCtorOpts.request = require('request');
   baseCtorOpts.userAgent = 'github-projects-source-test';
@@ -71,13 +70,15 @@ function runTest(testCase) {
   test(testCase.name, metadataTest);
 
   function metadataTest(t) {
-    var githubProjectsSource = GitHubProjectsSource(defaults(
-      {
-        onProject: checkProject
-      },
-      testCase.ctorOpts
-    ));
-    githubProjectsSource.startStream({sources: ['API']}, close);
+    var githubProjectsSource = GitHubProjectsSource(
+      defaults(
+        {
+          onProject: checkProject
+        },
+        testCase.ctorOpts
+      )
+    );
+    githubProjectsSource.startStream({ sources: ['API'] }, close);
 
     function checkProject(project) {
       t.ok(project.name, 'Project has a name.');

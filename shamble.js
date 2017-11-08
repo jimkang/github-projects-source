@@ -6,7 +6,7 @@ function shamble(tasks) {
   function startShambling() {
     var tasksComplete = 0;
     var lastResultArray = Array.prototype.slice.call(arguments);
-    runNextTask();  
+    runNextTask();
 
     function runNextTask() {
       var nextTask = tasks[tasksComplete];
@@ -17,8 +17,7 @@ function shamble(tasks) {
 
       if (nextTaskType === 'a') {
         nextTaskFn.apply(nextTaskFn, lastResultArray.concat([callback]));
-      }
-      else {
+      } else {
         lastResultArray = [nextTaskFn.apply(nextTaskFn, lastResultArray)];
         tasksComplete += 1;
         if (tasksComplete < tasks.length) {

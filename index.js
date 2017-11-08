@@ -10,24 +10,22 @@ var defaultGetUserCommits = require('get-user-commits');
 var getProjectMetadata = require('./get-project-metadata');
 var defaults = require('lodash.defaults');
 
-function GitHubProjectsSource(
-  {
-    onDeed,
-    onProject,
-    dbName = 'observatory',
-    db,
-    filterProject,
-    githubToken,
-    username,
-    userEmail,
-    request,
-    userAgent,
-    onNonFatalError,
-    getUserCommits = defaultGetUserCommits,
-    queryLogger,
-    skipMetadata
-  }) {
-
+function GitHubProjectsSource({
+  onDeed,
+  onProject,
+  dbName = 'observatory',
+  db,
+  filterProject,
+  githubToken,
+  username,
+  userEmail,
+  request,
+  userAgent,
+  onNonFatalError,
+  getUserCommits = defaultGetUserCommits,
+  queryLogger,
+  skipMetadata
+}) {
   var levelupOpts = {
     valueEncoding: 'json'
   };
@@ -36,7 +34,9 @@ function GitHubProjectsSource(
   }
 
   var levelDb = levelup(dbName, levelupOpts);
-  var userDb = Sublevel(levelDb).sublevel('user').sublevel(username);
+  var userDb = Sublevel(levelDb)
+    .sublevel('user')
+    .sublevel(username);
   var deedDb = userDb.sublevel('deed');
   var projectDb = userDb.sublevel('project');
 
@@ -81,14 +81,16 @@ function GitHubProjectsSource(
     projectDb.get(id, done);
   }
 
-  function startStream({sources = ['local', 'API'], existingProjects = []}, done) {
+  function startStream(
+    { sources = ['local', 'API'], existingProjects = [] },
+    done
+  ) {
     var outstandingPuts = 0;
     var projectMetadata;
 
     if (skipMetadata) {
       startLocalStream(sb(proceedAfterStreamingLocal, done));
-    }
-    else {
+    } else {
       getProjectMetadata(
         {
           gitRepoOwner: username,
@@ -102,8 +104,7 @@ function GitHubProjectsSource(
     function saveMetadata(error, metadata) {
       if (error) {
         onNonFatalError(error);
-      }
-      else {
+      } else {
         projectMetadata = metadata;
       }
       startLocalStream(sb(proceedAfterStreamingLocal, done));
@@ -141,12 +142,8 @@ function GitHubProjectsSource(
         };
         // console.log('localProjects', localProjects);
 
-        getUserCommits(
-          getUserCommitsOpts,
-          callDoneWhenOutstandingPutsComplete
-        );
-      }
-      else {
+        getUserCommits(getUserCommitsOpts, callDoneWhenOutstandingPutsComplete);
+      } else {
         callNextTick(done);
       }
     }
@@ -175,11 +172,9 @@ function GitHubProjectsSource(
       // console.log('callDoneWhenOutstandingPutsComplete outstandingPuts', outstandingPuts);
       if (error) {
         done(error);
-      }
-      else if (outstandingPuts < 1) {
+      } else if (outstandingPuts < 1) {
         callNextTick(done);
-      }
-      else {
+      } else {
         setTimeout(callDoneWhenOutstandingPutsComplete, 200);
       }
     }
@@ -206,11 +201,6 @@ function GitHubProjectsSource(
     q.awaitAll(sb(passProjects, done));
 
     function collectLocalDeed(deed) {
-      var containingProject = findWhere(projects, {name: deed.projectName});
-      if (!containingProject.deeds) {
-        containingProject.deeds = [];
-      }
-      containingProject.deeds.push(deed);
       onDeed(deed, 'local');
     }
 
@@ -235,8 +225,7 @@ function put(db, entity, listener, done) {
   function processEntity(error) {
     if (error) {
       done(error);
-    }
-    else {
+    } else {
       if (listener) {
         listener(entity);
       }
@@ -250,8 +239,7 @@ function streamLocalEntities(db, listener, done) {
     var stream = db.createValueStream();
     stream.on('data', listener);
     stream.on('end', done);
-  }
-  else {
+  } else {
     callNextTick(done);
   }
 }
@@ -265,19 +253,17 @@ function updateProjectListAWithProjectListB(a, b) {
   return a;
 
   function updateWithProject(updatingProject) {
-    var updatee = findWhere(a, {name: updatingProject.name});
+    var updatee = findWhere(a, { name: updatingProject.name });
     if (!updatee) {
       a.push(updatingProject);
-    }
-    else {
+    } else {
       for (var key in updatingProject) {
         if (key === 'deeds') {
           if (!updatee.deeds) {
             updatee.deeds = [];
           }
           updatee.deeds = updatee.deeds.concat(updatingProject.deeds);
-        }
-        else {
+        } else {
           updatee[key] = updatingProject[key];
         }
       }

@@ -10,15 +10,13 @@ var defaults = require('lodash.defaults');
 var omit = require('lodash.omit');
 var getUserCommits = require('get-user-commits');
 
-
 var baseCtorOpts = {};
 
 if (typeof window === 'object') {
   // Browser mode.
   baseCtorOpts.db = require('level-js');
   baseCtorOpts.request = require('basic-browser-request');
-}
-else {
+} else {
   baseCtorOpts.db = require('leveldown');
   baseCtorOpts.request = require('request');
 }
@@ -34,11 +32,25 @@ var testCases = [
         getUserCommits,
         cache: false
       },
-      baseCtorOpts    
+      baseCtorOpts
     ),
     projects: [
-      {'name':'array-viewfinder','id':'MDEwOlJlcG9zaXRvcnk0MDM4NjQ5MQ==','pushedAt':'2015-09-11T00:00:30Z','description':'Maintains a view into an array for you, for paging and other uses.','lastCheckedDate':'2017-09-06T04:00:04.886Z'},
-      {'name':'brush-viewfinder','id':'MDEwOlJlcG9zaXRvcnk0MTA5NDU3MA==','pushedAt':'2015-11-15T03:03:22Z','description':'An example that establishes a two-way connection between array-viewfinder and a D3 brush control.','lastCheckedDate':'2017-09-06T04:00:04.886Z'}
+      {
+        name: 'array-viewfinder',
+        id: 'MDEwOlJlcG9zaXRvcnk0MDM4NjQ5MQ==',
+        pushedAt: '2015-09-11T00:00:30Z',
+        description:
+          'Maintains a view into an array for you, for paging and other uses.',
+        lastCheckedDate: '2017-09-06T04:00:04.886Z'
+      },
+      {
+        name: 'brush-viewfinder',
+        id: 'MDEwOlJlcG9zaXRvcnk0MTA5NDU3MA==',
+        pushedAt: '2015-11-15T03:03:22Z',
+        description:
+          'An example that establishes a two-way connection between array-viewfinder and a D3 brush control.',
+        lastCheckedDate: '2017-09-06T04:00:04.886Z'
+      }
     ]
   },
   {
@@ -54,8 +66,20 @@ var testCases = [
       baseCtorOpts
     ),
     projects: [
-      {'name':'bl.ocks.org','id':'MDEwOlJlcG9zaXRvcnk0ODc3MjYzNA==','pushedAt':'2016-03-29T17:30:30Z','description':'Browser Extensions for bl.ocks.org','lastCheckedDate':'2017-09-07T15:53:30.794Z'},
-      {'name':'solar-calculator','id':'MDEwOlJlcG9zaXRvcnkyNjUyMjA1MQ==','pushedAt':'2017-06-09T22:29:33Z','description':'Equations for computing the position of the Sun.','lastCheckedDate':'2017-09-07T15:53:30.794Z'}
+      {
+        name: 'bl.ocks.org',
+        id: 'MDEwOlJlcG9zaXRvcnk0ODc3MjYzNA==',
+        pushedAt: '2016-03-29T17:30:30Z',
+        description: 'Browser Extensions for bl.ocks.org',
+        lastCheckedDate: '2017-09-07T15:53:30.794Z'
+      },
+      {
+        name: 'solar-calculator',
+        id: 'MDEwOlJlcG9zaXRvcnkyNjUyMjA1MQ==',
+        pushedAt: '2017-06-09T22:29:33Z',
+        description: 'Equations for computing the position of the Sun.',
+        lastCheckedDate: '2017-09-07T15:53:30.794Z'
+      }
     ]
   }
 ];
@@ -72,12 +96,14 @@ function runTests(testCase) {
   );
 
   function projectUpdateTest(t) {
-    var githubProjectsSource = GitHubProjectsSource(defaults(
-      {
-        dbName: 'user-namespace-test'
-      },
-      testCase.ctorOpts
-    ));
+    var githubProjectsSource = GitHubProjectsSource(
+      defaults(
+        {
+          dbName: 'user-namespace-test'
+        },
+        testCase.ctorOpts
+      )
+    );
 
     var q = queue();
     testCase.projects.forEach(queuePutProject);
@@ -88,7 +114,7 @@ function runTests(testCase) {
     }
 
     function putProject(project, done) {
-      githubProjectsSource.putProject(project, checkPutError);    
+      githubProjectsSource.putProject(project, checkPutError);
 
       function checkPutError(error) {
         assertNoError(t.ok, error, 'No error while putting project.');
@@ -104,15 +130,17 @@ function runTests(testCase) {
   function localProjectStreamTest(t) {
     var emittedProjects = [];
 
-    var githubProjectsSource = GitHubProjectsSource(defaults(
-      {
-        dbName: 'user-namespace-test',
-        onProject: collectProject
-      },
-      testCase.ctorOpts
-    ));
+    var githubProjectsSource = GitHubProjectsSource(
+      defaults(
+        {
+          dbName: 'user-namespace-test',
+          onProject: collectProject
+        },
+        testCase.ctorOpts
+      )
+    );
 
-    githubProjectsSource.startStream({sources: ['local']}, checkStreamEnd);
+    githubProjectsSource.startStream({ sources: ['local'] }, checkStreamEnd);
 
     function collectProject(project) {
       emittedProjects.push(project);
@@ -131,7 +159,9 @@ function runTests(testCase) {
     }
 
     function checkEmittedForProject(project) {
-      var correspondingEmittedProject = findWhere(emittedProjects, {id: project.id});
+      var correspondingEmittedProject = findWhere(emittedProjects, {
+        id: project.id
+      });
       t.deepEqual(
         omit(correspondingEmittedProject, 'deeds', 'commits'),
         project,
