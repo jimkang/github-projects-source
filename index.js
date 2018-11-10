@@ -24,7 +24,8 @@ function GitHubProjectsSource({
   onNonFatalError,
   getUserCommits = defaultGetUserCommits,
   queryLogger,
-  skipMetadata
+  skipMetadata,
+  branchMetadataIsOn
 }) {
   var levelupOpts = {
     valueEncoding: 'json'
@@ -95,7 +96,8 @@ function GitHubProjectsSource({
         {
           gitRepoOwner: username,
           gitToken: githubToken,
-          request
+          request,
+          branchMetadataIsOn
         },
         saveMetadata
       );

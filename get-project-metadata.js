@@ -4,7 +4,7 @@ var GitHubFile = require('github-file');
 var sb = require('standard-bail')();
 
 function getProjectMetadata(
-  { gitRepoOwner, gitToken, shouldSetUserAgent, request },
+  { gitRepoOwner, gitToken, branchMetadataIsOn = 'master', request },
   done
 ) {
   var encodeInBase64;
@@ -22,7 +22,7 @@ function getProjectMetadata(
   }
 
   var githubFile = GitHubFile({
-    branch: 'master',
+    branch: branchMetadataIsOn,
     repo: 'observatory-meta',
     gitRepoOwner,
     gitToken,
@@ -40,7 +40,7 @@ function getProjectMetadata(
     } else {
       done(
         new Error(
-          'Metadata does not exist for ' + gitRepoOwner + '\'s projects.'
+          'Metadata does not exist for ' + gitRepoOwner + "'s projects."
         )
       );
     }

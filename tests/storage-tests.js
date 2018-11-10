@@ -131,7 +131,7 @@ function localDeedStreamTest(t) {
       name: 'attnbot',
       id: 'MDEwOlJlcG9zaXRvcnk0MzA2NjIwMA==',
       pushedAt: '2015-10-18T17:09:10Z',
-      description: 'A bot that doesn\'t always hear things correctly.',
+      description: "A bot that doesn't always hear things correctly.",
       lastCheckedDate: '2017-06-19T01:39:22.344Z'
     }
   ];
