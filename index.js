@@ -14,7 +14,7 @@ function GitHubProjectsSource({
   onDeed,
   onProject,
   dbName = 'observatory',
-  db,
+  db, // DB is actually the DB abstraction, like leveldown.
   filterProject,
   githubToken,
   username,
@@ -30,11 +30,10 @@ function GitHubProjectsSource({
   var levelupOpts = {
     valueEncoding: 'json'
   };
-  if (db) {
-    levelupOpts.db = db;
-  }
+  var dbInst;
+  dbInst = db(dbName);
 
-  var levelDb = levelup(dbName, levelupOpts);
+  var levelDb = levelup(dbInst, levelupOpts);
   var userDb = Sublevel(levelDb)
     .sublevel('user')
     .sublevel(username);
