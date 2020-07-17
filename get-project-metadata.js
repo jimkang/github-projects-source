@@ -40,7 +40,7 @@ function getProjectMetadata(
     } else {
       done(
         new Error(
-          'Metadata does not exist for ' + gitRepoOwner + "'s projects."
+          'Metadata does not exist for ' + gitRepoOwner + '\'s projects.'
         )
       );
     }

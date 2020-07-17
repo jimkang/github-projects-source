@@ -1,5 +1,3 @@
-/* global window */
-
 var test = require('tape');
 var GitHubProjectsSource = require('../index');
 var assertNoError = require('assert-no-error');
