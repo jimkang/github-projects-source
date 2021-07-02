@@ -25,18 +25,16 @@ function GitHubProjectsSource({
   getUserCommits = defaultGetUserCommits,
   queryLogger,
   skipMetadata,
-  branchMetadataIsOn
+  branchMetadataIsOn,
 }) {
   var levelupOpts = {
-    valueEncoding: 'json'
+    valueEncoding: 'json',
   };
   var dbInst;
   dbInst = db(dbName);
 
   var levelDb = levelup(dbInst, levelupOpts);
-  var userDb = Sublevel(levelDb)
-    .sublevel('user')
-    .sublevel(username);
+  var userDb = Sublevel(levelDb).sublevel('user').sublevel(username);
   var deedDb = userDb.sublevel('deed');
   var projectDb = userDb.sublevel('project');
 
@@ -46,7 +44,7 @@ function GitHubProjectsSource({
     putProject,
     getProject,
     startStream,
-    closeDb
+    closeDb,
   };
 
   function putDeed(deed, done) {
@@ -96,7 +94,7 @@ function GitHubProjectsSource({
           gitRepoOwner: username,
           gitToken: githubToken,
           request,
-          branchMetadataIsOn
+          branchMetadataIsOn,
         },
         saveMetadata
       );
@@ -130,16 +128,16 @@ function GitHubProjectsSource({
             ['s', decorateProjectWithMetadata],
             ['a', curry(putProjectFromSource)('API')],
             ['s', handlePutError],
-            ['s', decrementOutstandingPuts]
+            ['s', decrementOutstandingPuts],
           ]),
           onCommit: shamble([
             ['s', convertCommitToDeed],
             ['s', incrementOutstandingPuts],
             ['a', curry(putDeedFromSource)('API')],
             ['s', handlePutError],
-            ['s', decrementOutstandingPuts]
+            ['s', decrementOutstandingPuts],
           ]),
-          queryLogger
+          queryLogger,
         };
         // console.log('localProjects', localProjects);
 
@@ -202,12 +200,19 @@ function GitHubProjectsSource({
     q.awaitAll(sb(passProjects, done));
 
     function collectLocalDeed(deed) {
-      onDeed(deed, 'local');
+      if (
+        typeof filterProject !== 'function' ||
+        filterProject({ name: deed.projectName })
+      ) {
+        onDeed(deed, 'local');
+      }
     }
 
     function collectLocalProject(project) {
-      projects.push(project);
-      onProject(project);
+      if (typeof filterProject !== 'function' || filterProject(project)) {
+        projects.push(project);
+        onProject(project);
+      }
     }
 
     function passProjects() {
